@@ -479,17 +479,17 @@ def create_anime_thumbnail(
         try:
 
             title_font = ImageFont.truetype(
-                "arial.ttf",
+                "BebasNeue-Regular.ttf",
                 64
             )
 
             logo_font = ImageFont.truetype(
-                "arial.ttf",
+                "BebasNeue-Regular.ttf",
                 42
             )
 
             small_font = ImageFont.truetype(
-                "arial.ttf",
+                "BebasNeue-Regular.ttf",
                 28
             )
 
