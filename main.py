@@ -691,13 +691,17 @@ def extract_season_from_caption(text):
         text
     )
 
+    print("\nCLEAN TEXT:")
+    print(clean_text)
+
     match = re.search(
-        r"SEASON\s*[:-]\s*(\d+)",
+        r"SEASON\s*:\-\s*(\d+)",
         clean_text,
         re.IGNORECASE
     )
 
     if match:
+
         return match.group(1).zfill(2)
 
     return "01"
