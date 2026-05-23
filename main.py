@@ -585,8 +585,8 @@ def create_anime_thumbnail(
         # HINDI DUB BADGE
         # =========================
 
-        badge_x = 55
-        badge_y = 535
+        badge_x = 70
+        badge_y = 470
 
         draw.rounded_rectangle(
             (
@@ -647,7 +647,7 @@ def create_anime_thumbnail(
         x = (1280 - text_width) // 2
 
         # MOVE TITLE UP
-        y = 545
+        y = 575
 
         # SHADOW
 
