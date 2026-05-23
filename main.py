@@ -185,6 +185,10 @@ async def join_channel(link):
 
     try:
 
+        # =========================
+        # PRIVATE INVITE LINK
+        # =========================
+
         if "t.me/+" in link:
 
             invite_hash = (
@@ -193,14 +197,40 @@ async def join_channel(link):
                 .strip("/")
             )
 
-            result = await client(
-                ImportChatInviteRequest(
-                    invite_hash
-                )
-            )
+            try:
 
-            if result.chats:
-                return result.chats[0]
+                result = await client(
+                    ImportChatInviteRequest(
+                        invite_hash
+                    )
+                )
+
+                if result.chats:
+                    return result.chats[0]
+
+            except Exception as e:
+
+                print(f"\nJOIN INFO: {e}")
+
+                # already joined fix
+                if (
+                    "already a participant"
+                    in str(e).lower()
+                ):
+
+                    dialogs = await client.get_dialogs()
+
+                    for dialog in dialogs:
+
+                        if (
+                            hasattr(dialog.entity, "title")
+                        ):
+
+                            return dialog.entity
+
+        # =========================
+        # PUBLIC USERNAME LINK
+        # =========================
 
         else:
 
@@ -219,40 +249,23 @@ async def join_channel(link):
                 username
             )
 
-            await client(
-                JoinChannelRequest(entity)
-            )
+            try:
+
+                await client(
+                    JoinChannelRequest(entity)
+                )
+
+            except Exception as e:
+
+                print(f"\nJOIN INFO: {e}")
 
             return entity
 
     except Exception as e:
 
-        print(f"\nJOIN INFO: {e}")
-
-        try:
-
-            username = (
-                link
-                .replace(
-                    "https://t.me/",
-                    ""
-                )
-                .replace("@", "")
-                .replace("*", "")
-                .strip("/")
-            )
-
-            entity = await client.get_entity(
-                username
-            )
-
-            return entity
-
-        except:
-            pass
+        print(f"\nJOIN FAILED: {e}")
 
     return None
-
 
 async def find_latest_video_post(
     channel,
@@ -418,7 +431,8 @@ def fetch_tmdb_poster(anime_name):
 def create_anime_thumbnail(
     poster_path,
     anime_name,
-    episode_number
+    episode_number,
+    season_number
 ):
 
     try:
@@ -448,30 +462,7 @@ def create_anime_thumbnail(
 
         draw = ImageDraw.Draw(img)
 
-        # =========================
-        # SEASON
-        # =========================
-
-        season_number = "01"
-
-        try:
-
-            season_match = re.search(
-                r"Season\s*[:-]\s*(\d+)",
-                CURRENT_TEXT,
-                re.IGNORECASE
-            )
-
-            if season_match:
-
-                season_number = (
-                    season_match.group(1)
-                    .zfill(2)
-                )
-
-        except:
-            pass
-
+      
         # =========================
         # FONTS
         # =========================
@@ -609,7 +600,7 @@ def create_anime_thumbnail(
             fill="white"
         )
 
-        # =========================
+                # =========================
         # ANIME TITLE
         # =========================
 
@@ -646,7 +637,7 @@ def create_anime_thumbnail(
 
         x = (1280 - text_width) // 2
 
-        # MOVE TITLE UP
+        # TITLE POSITION
         y = 575
 
         # SHADOW
@@ -691,45 +682,20 @@ def create_anime_thumbnail(
         print(e)
 
         return poster_path
-        
-        # =========================
-        # SAVE
-        # =========================
+def extract_season_from_caption(text):
 
-        output = "final_thumb.jpg"
+    match = re.search(
+        r"SEASON\s*[:-]\s*(\d+)",
+        text,
+        re.IGNORECASE
+    )
 
-        img.convert("RGB").save(
-            output,
-            quality=95
-        )
+    if match:
+        return match.group(1).zfill(2)
 
-        return output
+    return "01"
 
-    except Exception as e:
 
-        print(e)
-
-        return poster_path
-        
-        # =========================
-        # SAVE
-        # =========================
-
-        output = "final_thumb.jpg"
-
-        img.convert("RGB").save(
-            output,
-            quality=95
-        )
-
-        return output
-
-    except Exception as e:
-
-        print(e)
-
-        return poster_path
-        
 # =========================================
 # THUMBNAIL BOT
 # =========================================
@@ -953,6 +919,9 @@ async def handler(event):
         caption = clean_caption(
             post.message
         )
+        season_number = extract_season_from_caption(
+       post.message
+        )
 
         # =================================
         # TMDB POSTER
@@ -983,7 +952,8 @@ async def handler(event):
         poster = create_anime_thumbnail(
             poster,
             anime_name,
-            episode_number
+            episode_number,
+            season_number
         )
 
         print(
