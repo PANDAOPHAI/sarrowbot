@@ -274,7 +274,7 @@ async def find_latest_video_post(
 
     async for msg in client.iter_messages(
         channel,
-        limit=150
+        limit=50
     ):
 
         if not msg.message:
@@ -722,7 +722,7 @@ async def process_thumbnail_bot(
 
     async with client.conversation(
         bot,
-        timeout=600
+        timeout=300
     ) as conv:
 
         print(
@@ -901,7 +901,7 @@ async def handler(event):
         # WAIT TELEGRAM SYNC
         # =================================
 
-        await asyncio.sleep(25)
+        await asyncio.sleep(10)
 
         # =================================
         # FIND VIDEO
