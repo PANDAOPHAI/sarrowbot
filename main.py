@@ -480,17 +480,17 @@ def create_anime_thumbnail(
 
             title_font = ImageFont.truetype(
                 "BebasNeue-Regular.ttf",
-                64
+                120
             )
 
             logo_font = ImageFont.truetype(
                 "BebasNeue-Regular.ttf",
-                42
+                70
             )
 
             small_font = ImageFont.truetype(
                 "BebasNeue-Regular.ttf",
-                28
+                50
             )
 
         except:
