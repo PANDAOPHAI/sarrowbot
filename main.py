@@ -581,7 +581,7 @@ def create_anime_thumbnail(
 
         draw = ImageDraw.Draw(img)
 
-        # =========================
+                # =========================
         # HINDI DUB BADGE
         # =========================
 
@@ -609,71 +609,89 @@ def create_anime_thumbnail(
             fill="white"
         )
 
-      
-# =========================
-# ANIME TITLE
-# =========================
+        # =========================
+        # ANIME TITLE
+        # =========================
 
-anime_name = anime_name.upper()
+        anime_name = anime_name.upper()
 
-# BIGGER PROFESSIONAL SIZE
+        # BIGGER PROFESSIONAL SIZE
 
-dynamic_size = 160
+        dynamic_size = 160
 
-if len(anime_name) > 22:
-    dynamic_size = 130
+        if len(anime_name) > 22:
+            dynamic_size = 130
 
-if len(anime_name) > 30:
-    dynamic_size = 105
+        if len(anime_name) > 30:
+            dynamic_size = 105
 
-try:
+        try:
 
-    title_font = ImageFont.truetype(
-        "BebasNeue-Regular.ttf",
-        dynamic_size
-    )
+            title_font = ImageFont.truetype(
+                "BebasNeue-Regular.ttf",
+                dynamic_size
+            )
 
-except:
+        except:
 
-    title_font = ImageFont.load_default()
+            title_font = ImageFont.load_default()
 
-bbox = draw.textbbox(
-    (0, 0),
-    anime_name,
-    font=title_font
-)
+        bbox = draw.textbbox(
+            (0, 0),
+            anime_name,
+            font=title_font
+        )
 
-text_width = bbox[2] - bbox[0]
+        text_width = bbox[2] - bbox[0]
 
-x = (1280 - text_width) // 2
+        x = (1280 - text_width) // 2
 
-# MOVE TITLE UP
-y = 545
+        # MOVE TITLE UP
+        y = 545
 
-# SHADOW
+        # SHADOW
 
-draw.text(
-    (
-        x + 5,
-        y + 5
-    ),
-    anime_name,
-    font=title_font,
-    fill=(0, 0, 0)
-)
+        draw.text(
+            (
+                x + 5,
+                y + 5
+            ),
+            anime_name,
+            font=title_font,
+            fill=(0, 0, 0)
+        )
 
-# MAIN TITLE
+        # MAIN TITLE
 
-draw.text(
-    (
-        x,
-        y
-    ),
-    anime_name,
-    font=title_font,
-    fill="white"
-)
+        draw.text(
+            (
+                x,
+                y
+            ),
+            anime_name,
+            font=title_font,
+            fill="white"
+        )
 
+        # =========================
+        # SAVE
+        # =========================
+
+        output = "final_thumb.jpg"
+
+        img.convert("RGB").save(
+            output,
+            quality=95
+        )
+
+        return output
+
+    except Exception as e:
+
+        print(e)
+
+        return poster_path
+        
         # =========================
         # SAVE
         # =========================
