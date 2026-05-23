@@ -1,0 +1,7 @@
+telethon
+requests
+pillow
+tgcrypto
+cryptg
+flask
+gunicorn
