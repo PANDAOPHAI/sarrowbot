@@ -684,9 +684,16 @@ def create_anime_thumbnail(
         return poster_path
 def extract_season_from_caption(text):
 
+    # remove telegram markdown
+    clean_text = re.sub(
+        r"[*_`\[\]]",
+        "",
+        text
+    )
+
     match = re.search(
         r"SEASON\s*[:-]\s*(\d+)",
-        text,
+        clean_text,
         re.IGNORECASE
     )
 
@@ -694,7 +701,6 @@ def extract_season_from_caption(text):
         return match.group(1).zfill(2)
 
     return "01"
-
 
 # =========================================
 # THUMBNAIL BOT
@@ -912,15 +918,23 @@ async def handler(event):
 
         print("\nVIDEO FOUND")
 
-        # =================================
+                # =================================
         # CAPTION
         # =================================
 
         caption = clean_caption(
             post.message
         )
+
         season_number = extract_season_from_caption(
-       post.message
+            post.text or ""
+        )
+
+        print("\nVIDEO CAPTION:")
+        print(post.text)
+
+        print(
+            f"\nSEASON: {season_number}"
         )
 
         # =================================
