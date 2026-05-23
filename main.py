@@ -423,10 +423,6 @@ def create_anime_thumbnail(
 
     try:
 
-        # =========================
-        # OPEN IMAGE
-        # =========================
-
         img = Image.open(
             poster_path
         ).convert("RGB")
@@ -436,13 +432,13 @@ def create_anime_thumbnail(
         )
 
         # =========================
-        # LIGHT CINEMATIC OVERLAY
+        # CINEMATIC OVERLAY
         # =========================
 
         overlay = Image.new(
             "RGBA",
             img.size,
-            (0, 0, 0, 45)
+            (0, 0, 0, 55)
         )
 
         img = Image.alpha_composite(
@@ -482,57 +478,42 @@ def create_anime_thumbnail(
 
         try:
 
+            title_font = ImageFont.truetype(
+                "arial.ttf",
+                64
+            )
+
             logo_font = ImageFont.truetype(
                 "arial.ttf",
-                52
+                42
             )
 
             small_font = ImageFont.truetype(
                 "arial.ttf",
-                38
-            )
-
-        except:
-
-            logo_font = ImageFont.load_default()
-            small_font = ImageFont.load_default()
-
-        # dynamic title size
-
-        title_size = 72
-
-        if len(anime_name) > 24:
-            title_size = 58
-
-        if len(anime_name) > 34:
-            title_size = 46
-
-        try:
-
-            title_font = ImageFont.truetype(
-                "arial.ttf",
-                title_size
+                28
             )
 
         except:
 
             title_font = ImageFont.load_default()
+            logo_font = ImageFont.load_default()
+            small_font = ImageFont.load_default()
 
         # =========================
-        # TGFLIX LOGO
+        # TOP LEFT LOGO
         # =========================
 
         draw.text(
-            (45, 35),
+            (35, 25),
             "TGFLIX",
             font=logo_font,
-            fill=(255, 30, 30),
-            stroke_width=3,
+            fill=(255, 40, 40),
+            stroke_width=2,
             stroke_fill="black"
         )
 
         # =========================
-        # S01E01 BOX
+        # TOP RIGHT S01E01
         # =========================
 
         se_text = (
@@ -547,11 +528,19 @@ def create_anime_thumbnail(
         )
 
         text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
 
-        box_x1 = 1280 - text_width - 75
-        box_y1 = 28
-        box_x2 = 1240
-        box_y2 = 88
+        padding_x = 22
+        padding_y = 12
+
+        box_x1 = 1280 - text_width - 50
+        box_y1 = 25
+        box_x2 = 1250
+        box_y2 = (
+            box_y1
+            + text_height
+            + padding_y * 2
+        )
 
         draw.rounded_rectangle(
             (
@@ -560,14 +549,14 @@ def create_anime_thumbnail(
                 box_x2,
                 box_y2
             ),
-            radius=14,
+            radius=18,
             fill=(15, 15, 15)
         )
 
         draw.text(
             (
-                box_x1 + 20,
-                box_y1 + 10
+                box_x1 + padding_x,
+                box_y1 + padding_y - 2
             ),
             se_text,
             font=small_font,
@@ -575,27 +564,45 @@ def create_anime_thumbnail(
         )
 
         # =========================
+        # BOTTOM SHADOW AREA
+        # =========================
+
+        shadow = Image.new(
+            "RGBA",
+            (1280, 220),
+            (0, 0, 0, 150)
+        )
+
+        img.paste(
+            shadow,
+            (0, 500),
+            shadow
+        )
+
+        draw = ImageDraw.Draw(img)
+
+        # =========================
         # HINDI DUB BADGE
         # =========================
 
         badge_x = 55
-        badge_y = 575
+        badge_y = 535
 
         draw.rounded_rectangle(
             (
                 badge_x,
                 badge_y,
-                badge_x + 260,
-                badge_y + 58
+                badge_x + 240,
+                badge_y + 55
             ),
             radius=14,
-            fill=(220, 30, 30)
+            fill=(225, 35, 35)
         )
 
         draw.text(
             (
                 badge_x + 22,
-                badge_y + 8
+                badge_y + 12
             ),
             "HINDI DUB",
             font=small_font,
@@ -608,6 +615,27 @@ def create_anime_thumbnail(
 
         anime_name = anime_name.upper()
 
+        # auto resize
+
+        dynamic_size = 64
+
+        if len(anime_name) > 22:
+            dynamic_size = 54
+
+        if len(anime_name) > 30:
+            dynamic_size = 44
+
+        try:
+
+            title_font = ImageFont.truetype(
+                "arial.ttf",
+                dynamic_size
+            )
+
+        except:
+
+            title_font = ImageFont.load_default()
+
         bbox = draw.textbbox(
             (0, 0),
             anime_name,
@@ -618,30 +646,51 @@ def create_anime_thumbnail(
 
         x = (1280 - text_width) // 2
 
-        # shadow
+        y = 610
+
+        # SHADOW
 
         draw.text(
             (
-                x + 3,
-                610 + 3
+                x + 4,
+                y + 4
             ),
             anime_name,
             font=title_font,
             fill=(0, 0, 0)
         )
 
-        # main title
+        # MAIN TITLE
 
         draw.text(
             (
                 x,
-                610
+                y
             ),
             anime_name,
             font=title_font,
             fill="white"
         )
 
+        # =========================
+        # SAVE
+        # =========================
+
+        output = "final_thumb.jpg"
+
+        img.convert("RGB").save(
+            output,
+            quality=95
+        )
+
+        return output
+
+    except Exception as e:
+
+        print(e)
+
+        return poster_path
+        
         # =========================
         # SAVE
         # =========================
